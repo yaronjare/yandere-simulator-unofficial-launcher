@@ -14,7 +14,6 @@ import webbrowser
 import ctypes  
 import gc
 
-# Принудительно включаем агрессивный сборщик мусора
 gc.set_threshold(50, 5, 5)
 
 def resource_path(relative_path):
@@ -37,10 +36,8 @@ def get_system_language():
         pass
     return "EN"
 
-# Ультра-легкое воспроизведение аудио через Windows MCI без использования pygame
 def win_play_audio(file_path):
     try:
-        # Открываем аудио-файл через системный плеер Windows
         ctypes.windll.winmm.mciSendStringW(f'open "{file_path}" type mpegvideo alias bgaudio', None, 0, 0)
         ctypes.windll.winmm.mciSendStringW('play bgaudio repeat', None, 0, 0)
     except:
@@ -71,7 +68,6 @@ except ImportError:
 ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("blue")
 
-# Палитра
 PASTEL_BG = "#FFF5F7"         
 PASTEL_BORDER = "#F9D5E2"     
 PINK_RUN = "#F68FB4"
@@ -104,7 +100,7 @@ VERSION_FILE = os.path.join(GAME_DIR, "launcher_info.txt")
 
 URL_SITE = "https://yanderesimulator.com/"
 URL_BLOG = "https://yanderedev.wordpress.com/"
-URL_DISCORD = "https://discord.gg/yanderesimulator"
+URL_DISCORD = "https://discord.gg/yandere"
 
 LOCALIZATION = {
     "RU": {
@@ -217,7 +213,6 @@ class YandereLauncher(ctk.CTk):
         self.check_game_status()
         self.update_localization()
         
-        # Моментально чистим ОЗУ после сборки окна
         self.after(200, self._force_garbage_collection)
 
     def _force_garbage_collection(self):
@@ -437,7 +432,6 @@ class YandereLauncher(ctk.CTk):
             total_size = int(response.headers.get('content-length', 0))
             downloaded = 0
 
-            # Буфер на 64 КБ вместо тяжелого 1 МБ
             chunk_count = 0
             with open(ZIP_FILENAME, 'wb') as f:
                 for data in response.iter_content(65536):
@@ -447,7 +441,7 @@ class YandereLauncher(ctk.CTk):
                     
                     chunk_count += 1
                     if chunk_count % 30 == 0:
-                        gc.collect() # Чистим ОЗУ прямо в цикле
+                        gc.collect()
                         
                     if total_size > 0:
                         progress = downloaded / total_size
