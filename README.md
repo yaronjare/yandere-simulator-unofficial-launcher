@@ -20,3 +20,14 @@ Go to the **Releases** section on the right side of this page, download `Yandere
 If you want to run or inspect the source code, make sure you have Python 3.x installed, then install the dependencies:
 ```bash
 pip install customtkinter pillow requests pygame
+```
+
+Then run the main script:
+```bash
+python yandere_launcher.py
+```
+
+## Contact Me
+If you have any questions, suggestions, or just want to report a bug, feel free to reach out:
+* **Discord:** `dev1ls0ul`
+* **Telegram:** [@dekonaiser](https://t.me/dekonaiser)
