@@ -1,3 +1,5 @@
+import config
+from config import *
 import zipfile
 import os
 import sys
@@ -13,6 +15,7 @@ from PIL import Image, ImageTk
 import webbrowser
 import ctypes  
 import gc
+import time
 
 gc.set_threshold(50, 5, 5)
 
@@ -36,28 +39,6 @@ def get_system_language():
         pass
     return "EN"
 
-def win_play_audio(file_path):
-    try:
-        ctypes.windll.winmm.mciSendStringW(f'open "{file_path}" type mpegvideo alias bgaudio', None, 0, 0)
-        ctypes.windll.winmm.mciSendStringW('play bgaudio repeat', None, 0, 0)
-    except:
-        pass
-
-def win_stop_audio():
-    try:
-        ctypes.windll.winmm.mciSendStringW('stop bgaudio', None, 0, 0)
-        ctypes.windll.winmm.mciSendStringW('close bgaudio', None, 0, 0)
-    except:
-        pass
-
-def win_pause_audio():
-    try: ctypes.windll.winmm.mciSendStringW('pause bgaudio', None, 0, 0)
-    except: pass
-
-def win_resume_audio():
-    try: ctypes.windll.winmm.mciSendStringW('resume bgaudio', None, 0, 0)
-    except: pass
-
 
 try:
     import assets
@@ -68,110 +49,7 @@ except ImportError:
 ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("blue")
 
-PASTEL_BG = "#FFF5F7"         
-PASTEL_BORDER = "#F9D5E2"     
-PINK_RUN = "#F68FB4"
-PINK_RUN_HOVER = "#F474A2"
-PINK_MAIN = "#FBC5D8"
-PINK_MAIN_HOVER = "#F9AEC8"
-PINK_MOD = "#FCD6E3"
-PINK_MOD_HOVER = "#FBC1D4"
-PINK_UP = "#FEE5ED"
-PINK_UP_HOVER = "#FCD2DF"
-PASTEL_CANCEL = "#F7A8A8"
-PASTEL_CANCEL_HOVER = "#F58F8F"
-WHITE_COLOR = "#FFFFFF"      
-BLACK_COLOR = "#2C3E50"      
-
-FONT_FILE = "futura_mediumcyrusbyme.ttf" 
-FONT_FAMILY = "Futura-Meduim CY [Rus by me]" 
-
 load_custom_font(FONT_FILE)
-
-GAME_DIR = "YandereSimulator"
-ZIP_URL = "https://yanderesimulator.com/dl/latest.zip"
-ZIP_FILENAME = "YandereSimulator_latest.zip"
-EXE_NAME = "YandereSimulator.exe"
-BG_IMAGE_NAME = "ayano.png"  
-LOGO_IMAGE_NAME = "logo.png"  
-MUSIC_NAME = "launcher_music.mp3" 
-ICON_NAME = "icon.ico"       
-VERSION_FILE = os.path.join(GAME_DIR, "launcher_info.txt")
-
-URL_SITE = "https://yanderesimulator.com/"
-URL_BLOG = "https://yanderedev.wordpress.com/"
-URL_DISCORD = "https://discord.gg/yandere"
-
-LOCALIZATION = {
-    "RU": {
-        "subtitle": "Неофициальный лаунчер",
-        "status_checking": "Проверка файлов...",
-        "status_ready": "Игра не найдена.",
-        "status_preparing": "Подготовка...",
-        "status_installed": "Игра готова к запуску!",
-        "status_downloading": "Скачивание начато...",
-        "status_unpacking": "Распаковка игры...",
-        "status_canceled": "Скачивание отменено",
-        "status_done": "Установка завершена!",
-        "status_error": "Ошибка",
-        "status_checking_updates": "Проверка обновления...",
-        "status_pm_unpacking": "Установка PoseMod...",
-        "status_pm_success": "PoseMod успешно установлен!",
-        "btn_download": "Скачать игру",
-        "btn_redownload": "Переустановить",
-        "btn_cancel": "Отмена",
-        "btn_run": "Запустить игру",
-        "btn_posemod": "Установить PoseMod",
-        "btn_check_updates": "Проверить обновления",
-        "msg_success_title": "Успех",
-        "msg_success_text": "Yandere Simulator успешно скачан и разархивирован! Теперь вы можете её запустить.",
-        "msg_cancel_title": "Отмена",
-        "msg_cancel_text": "Остановить скачивание?",
-        "msg_error_title": "Ошибка",
-        "msg_warn_title": "Внимание",
-        "msg_warn_text": "Игра ещё не скачана!",
-        "msg_pm_warn": "Сначала скачайте саму игру!",
-        "msg_pm_missing": "Ошибка: Ресурс мода не найден в assets.py!",
-        "msg_up_to_date_title": "Обновлений нет",
-        "msg_up_to_date_text": "У вас уже установлена самая последняя версия игры!",
-        "msg_update_avail_title": "Доступно обновление",
-        "msg_update_avail_text": "На сервере найдена новая версия игры. Хотите скачать её сейчас?"
-    },
-    "EN": {
-        "subtitle": "Unofficial Launcher",
-        "status_checking": "Checking files...",
-        "status_ready": "Game not found.",
-        "status_preparing": "Preparing...",
-        "status_installed": "Game is ready!",
-        "status_downloading": "Downloading...",
-        "status_unpacking": "Unpacking game...",
-        "status_canceled": "Canceled",
-        "status_done": "Complete!",
-        "status_error": "Error",
-        "status_checking_updates": "Checking updates...",
-        "status_pm_unpacking": "Installing PoseMod...",
-        "status_pm_success": "PoseMod installed!",
-        "btn_download": "Download Game",
-        "btn_redownload": "Reinstall",
-        "btn_cancel": "Cancel",
-        "btn_run": "Play Game",
-        "btn_posemod": "Install PoseMod",
-        "btn_check_updates": "Check Updates",
-        "msg_success_title": "Success",
-        "msg_success_text": "Yandere Simulator successfully downloaded and unpacked! You can now launch it.",
-        "msg_cancel_title": "Cancel",
-        "msg_cancel_text": "Stop downloading?",
-        "msg_error_title": "Error",
-        "msg_warn_title": "Warning",
-        "msg_warn_text": "The game is not downloaded yet!",
-        "msg_pm_warn": "Please download the game first!",
-        "msg_pm_missing": "Error: Mod asset missing inside assets.py!",
-        "msg_up_to_date_title": "Up to Date",
-        "msg_up_to_date_text": "You already have the latest version of the game!",
-        "msg_update_avail_title": "Update Available",
-        "msg_update_avail_text": "A new version of the game is available on the server. Do you want to download it now?"
-    }
-}
 
 class AnimatedButton(ctk.CTkButton):
     def __init__(self, *args, **kwargs):
@@ -196,18 +74,12 @@ class YandereLauncher(ctk.CTk):
         self.downloading = False
         self.cancelled = False
         self.current_lang = get_system_language()
-        self.music_playing = False
 
         self.font_title = ctk.CTkFont(family=FONT_FAMILY, size=24, weight="bold")
         self.font_ui = ctk.CTkFont(family=FONT_FAMILY, size=11, weight="normal")
         self.font_status = ctk.CTkFont(family=FONT_FAMILY, size=12, weight="bold")
         self.font_btn = ctk.CTkFont(family=FONT_FAMILY, size=12, weight="bold")
         self.font_links = ctk.CTkFont(family=FONT_FAMILY, size=10, weight="bold")
-
-        music_path = resource_path(MUSIC_NAME)
-        if os.path.exists(music_path):
-            win_play_audio(music_path)
-            self.music_playing = True
 
         self.init_interface()
         self.check_game_status()
@@ -240,21 +112,13 @@ class YandereLauncher(ctk.CTk):
                 
                 img_cropped = img_resized.crop((left, top, right, bottom))
                 self.ayano_img = ImageTk.PhotoImage(img_cropped)
-                self.canvas.create_image(580, 420, image=self.ayano_img, anchor="se")
+                self.canvas.create_image(560, 420, image=self.ayano_img, anchor="se")
                 
                 del img_resized, img_cropped
             gc.collect()
 
         self.top_bar = ctk.CTkFrame(self, fg_color="transparent")
         self.canvas.create_window(280, 25, window=self.top_bar, width=520, height=40)
-
-        self.music_btn = ctk.CTkButton(
-            self.top_bar, text="🔊", width=35, height=28, font=self.font_ui,
-            fg_color=PASTEL_BG, hover_color=PASTEL_BORDER, text_color=BLACK_COLOR,
-            border_width=1, border_color=PASTEL_BORDER, corner_radius=6
-        )
-        self.music_btn.configure(command=self.toggle_music)
-        self.music_btn.pack(side="left")
 
         self.right_bar = ctk.CTkFrame(self.top_bar, fg_color="transparent")
         self.right_bar.pack(side="right")
@@ -368,16 +232,6 @@ class YandereLauncher(ctk.CTk):
         )
         self.discord_btn.grid(row=0, column=2, padx=3)
 
-    def toggle_music(self):
-        if self.music_playing:
-            win_pause_audio()
-            self.music_playing = False
-            self.music_btn.configure(text="🔇")
-        else:
-            win_resume_audio()
-            self.music_playing = True
-            self.music_btn.configure(text="🔊")
-
     def change_language(self, lang):
         self.current_lang = lang
         self.update_localization()
@@ -416,6 +270,7 @@ class YandereLauncher(ctk.CTk):
         self.download_btn.configure(state="disabled")
         self.posemod_btn.configure(state="disabled")
         self.check_updates_btn.configure(state="disabled")
+        self.run_btn.configure(state="disabled")
         self.cancel_btn.configure(state="normal")
         self.progress.set(0)
         threading.Thread(target=self.download_thread, daemon=True).start()
@@ -427,28 +282,72 @@ class YandereLauncher(ctk.CTk):
             if not os.path.exists(GAME_DIR): os.makedirs(GAME_DIR, exist_ok=True)
 
             self.update_status(lang_data["status_downloading"])
-            response = requests.get(ZIP_URL, stream=True, timeout=60)
-            response.raise_for_status()
-            total_size = int(response.headers.get('content-length', 0))
+            
+            fresh_url = f"{ZIP_URL}?t={int(time.time())}"
             downloaded = 0
+            total_size = 0
+            
+            try:
+                head_resp = requests.head(fresh_url, timeout=15, allow_redirects=True)
+                total_size = int(head_resp.headers.get('content-length', 0))
+            except:
+                pass
 
+            if os.path.exists(ZIP_FILENAME): 
+                os.remove(ZIP_FILENAME)
+
+            max_retries = 10
+            retry_count = 0
             chunk_count = 0
-            with open(ZIP_FILENAME, 'wb') as f:
-                for data in response.iter_content(65536):
-                    if self.cancelled: break
-                    f.write(data)
-                    downloaded += len(data)
+
+            while downloaded < total_size or total_size == 0:
+                if self.cancelled: break
+                
+                headers = {}
+                if downloaded > 0:
+                    headers['Range'] = f"bytes={downloaded}-"
+
+                try:
+                    response = requests.get(fresh_url, headers=headers, stream=True, timeout=30)
                     
-                    chunk_count += 1
-                    if chunk_count % 30 == 0:
-                        gc.collect()
-                        
-                    if total_size > 0:
-                        progress = downloaded / total_size
-                        self.progress.set(progress)
-                        prefix = "Ход" if self.current_lang == "RU" else "Progress"
-                        self.update_status(f"{prefix}: {progress*100:.1f}%")
-                    self.update()
+                    if response.status_code == 200 and downloaded > 0:
+                        downloaded = 0
+                        if os.path.exists(ZIP_FILENAME): os.remove(ZIP_FILENAME)
+
+                    response.raise_for_status()
+                    
+                    if total_size == 0:
+                        total_size = int(response.headers.get('content-length', 0))
+
+                    with open(ZIP_FILENAME, 'ab') as f:
+                        for data in response.iter_content(1048576):
+                            if self.cancelled: break
+                            f.write(data)
+                            downloaded += len(data)
+                            
+                            chunk_count += 1
+                            if chunk_count % 10 == 0:
+                                gc.collect()
+                                
+                            if total_size > 0:
+                                progress = downloaded / total_size
+                                self.progress.set(progress)
+                                prefix = "Ход" if self.current_lang == "RU" else "Progress"
+                                self.update_status(f"{prefix}: {progress*100:.1f}%")
+                            self.update()
+                            
+                    if downloaded >= total_size and total_size > 0:
+                        break
+
+                except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
+                    retry_count += 1
+                    if retry_count > max_retries:
+                        raise Exception(f"Слишком много сбоев сети ({retry_count}). Скачивание прервано.")
+                    
+                    prefix_err = "Обрыв связи. Переподключение" if self.current_lang == "RU" else "Conn lost. Reconnecting"
+                    self.update_status(f"{prefix_err} ({retry_count}/{max_retries})...")
+                    time.sleep(3)
+                    continue
 
             if self.cancelled:
                 if os.path.exists(ZIP_FILENAME): os.remove(ZIP_FILENAME)
@@ -462,8 +361,11 @@ class YandereLauncher(ctk.CTk):
             if os.path.exists(ZIP_FILENAME): os.remove(ZIP_FILENAME)
             
             try:
-                with open(VERSION_FILE, "w") as f:
-                    f.write(str(total_size))
+                head_resp = requests.head(fresh_url, timeout=15, allow_redirects=True)
+                server_date = head_resp.headers.get("Last-Modified", "")
+                if server_date:
+                    with open(VERSION_FILE, "w", encoding="utf-8") as f:
+                        f.write(server_date)
             except:
                 pass
 
@@ -477,6 +379,7 @@ class YandereLauncher(ctk.CTk):
             self.download_btn.configure(state="normal")
             self.posemod_btn.configure(state="normal")
             self.check_updates_btn.configure(state="normal")
+            self.run_btn.configure(state="normal")
             self.cancel_btn.configure(state="disabled")
             self.update_localization()
             gc.collect()
@@ -490,31 +393,35 @@ class YandereLauncher(ctk.CTk):
         lang_data = LOCALIZATION[self.current_lang]
         self.update_status(lang_data["status_checking_updates"])
         try:
-            response = requests.head(ZIP_URL, timeout=15)
+            fresh_url = f"{ZIP_URL}?t={int(time.time())}"
+            response = requests.head(fresh_url, timeout=15, allow_redirects=True)
             response.raise_for_status()
-            server_size = int(response.headers.get('content-length', 0))
+            server_date = response.headers.get('Last-Modified')
             
+            if not server_date:
+                server_date = response.headers.get('content-length', '0')
+
             if not self.check_game_status():
                 if messagebox.askyesno(lang_data["msg_update_avail_title"], lang_data["msg_update_avail_text"]):
                     self.after(10, self.start_download)
                 return
 
-            local_size = 0
+            local_date = ""
             if not os.path.exists(VERSION_FILE):
                 try:
-                    with open(VERSION_FILE, "w") as f:
-                        f.write(str(server_size))
-                    local_size = server_size
+                    with open(VERSION_FILE, "w", encoding="utf-8") as f:
+                        f.write(server_date)
+                    local_date = server_date
                 except:
                     pass
             else:
                 try:
-                    with open(VERSION_FILE, "r") as f:
-                        local_size = int(f.read().strip())
+                    with open(VERSION_FILE, "r", encoding="utf-8") as f:
+                        local_date = f.read().strip()
                 except:
                     pass
             
-            if server_size == local_size and local_size != 0:
+            if server_date == local_date and local_date != "":
                 messagebox.showinfo(lang_data["msg_up_to_date_title"], lang_data["msg_up_to_date_text"])
             else:
                 if messagebox.askyesno(lang_data["msg_update_avail_title"], lang_data["msg_update_avail_text"]):
@@ -539,6 +446,7 @@ class YandereLauncher(ctk.CTk):
         self.download_btn.configure(state="disabled")
         self.posemod_btn.configure(state="disabled")
         self.check_updates_btn.configure(state="disabled")
+        self.run_btn.configure(state="disabled")
         self.progress.set(0)
         threading.Thread(target=self.posemod_thread, daemon=True).start()
 
@@ -580,6 +488,7 @@ class YandereLauncher(ctk.CTk):
             self.download_btn.configure(state="normal")
             self.posemod_btn.configure(state="normal")
             self.check_updates_btn.configure(state="normal")
+            self.run_btn.configure(state="normal")
             self.progress.set(0)
             self.update_localization()
             gc.collect()
@@ -593,7 +502,6 @@ class YandereLauncher(ctk.CTk):
         exe_path = os.path.join(GAME_DIR, EXE_NAME)
         if self.check_game_status():
             try:
-                win_stop_audio()
                 subprocess.Popen([exe_path], cwd=GAME_DIR)
                 self.after(1500, self.quit)
             except Exception as e: messagebox.showerror(lang_data["msg_error_title"], str(e))
