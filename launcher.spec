@@ -5,7 +5,6 @@ block_cipher = None
 added_files = [
     ('ayano.png', '.'),
     ('logo.png', '.'),
-    ('launcher_music.mp3', '.'),
     ('icon.ico', '.'),
     ('futura_mediumcyrusbyme.ttf', '.')
 ]
@@ -15,7 +14,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=added_files,
-    hiddenimports=['customtkinter', 'PIL', 'pygame', 'requests'],
+    hiddenimports=['config', 'customtkinter', 'PIL', 'requests', 'customtkinter.windows.widgets.themes', 'customtkinter.windows.widgets.utility'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
